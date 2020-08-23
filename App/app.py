@@ -67,7 +67,12 @@ def loadCSVFile (file, sep=";"):
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return lst
 
-loadCSVFile ("Data/archivosmovies/SmallMoviesDetailsCleaned.csv", sep=";")
+#archivo = loadCSVFile ("Data/archivosmovies/SmallMoviesDetailsCleaned.csv", sep=";")
+#print (archivo['elements'][0])
+#dict_keys(['elements', 'size', 'type', 'cmpfunction'])
+#OrderedDict([('id', '2'), ('budget', '0'), ('genres', 'Drama|Crime'), ('imdb_id', 'tt0094675'), ('original_language', 'fi'), ('original_title', 'Ariel'), ('overview', 
+#"Taisto Kasurinen is a Finnish coal miner whose father has just committed suicide and who is framed for a crime he did not commit. In jail, he starts to dream about leaving the country and starting a new life. He escapes from prison but things don't go as planned..."), ('popularity', '0.823904'), ('production_companies', 'Villealfa 
+#Filmproduction Oy'), ('production_countries', 'Finland'), ('release_date', '21/10/1988'), ('revenue', '0'), ('runtime', '69'), ('spoken_languages', 'suomi'), ('status', 'Released'), ('tagline', ''), ('title', 'Ariel'), ('vote_average', '7.1'), ('vote_count', '40'), ('production_companies_number', '2'), ('production_countries_number', '1'), ('spoken_languages_number', '2')])
 
 
 

@@ -144,8 +144,8 @@ def test_addLast (lst, listamovies):
 def test_getElement(lst_movies, listamovies):
     peli = lt.getElement(lst_movies, 1)
     assert peli == listamovies['elements'][0]
-    peli = lt.getElement(lst_movies, 5)
-    assert peli == listamovies['elements'][4]
+    peli = lt.getElement(lst_movies, len (lst_movies['elements']))
+    assert peli == listamovies['elements'][len (lst_movies['elements']) - 1]
 
 
 
@@ -153,53 +153,54 @@ def test_getElement(lst_movies, listamovies):
 def test_removeFirst (lst_movies, listamovies):
     assert lt.size(lst_movies) == len (lst_movies['elements'])
     lt.removeFirst(lst_movies)
-    assert lt.size(lst_movies) == len (lst_movies['elements']) -1
+    assert lt.size(lst_movies) == len (lst_movies['elements'])
     peli = lt.getElement(lst_movies, 1)
-    assert peli  == listamovies['elements'][0]
+    assert peli  == listamovies['elements'][1]
 
 
 
 def test_removeLast (lst_movies, listamovies):
-    assert lt.size(lst_movies) == len (listamovies['elements'])
-    lt.removeLast(listamovies)
-    assert lt.size(lst_movies) == 4
-    peli = lt.getElement(listamovies, 4)
-    assert peli  == listamovies[3]
+    assert lt.size(lst_movies) == len (lst_movies['elements'])
+    lt.removeLast(lst_movies)
+    assert lt.size(lst_movies) == len (lst_movies['elements'])
+    peli = lt.getElement(lst_movies, int (len (lst_movies['elements'])))
+    assert peli  == listamovies['elements'][ int ((len (lst_movies['elements']) - 1))]
 
 
 
 def test_insertElement (lst, listamovies):
     assert lt.isEmpty(lst) is True
     assert lt.size(lst) == 0
-    lt.insertElement (lst, listamovies[0], 1)
+    lt.insertElement (lst, listamovies['elements'][0], 1)
     assert lt.size(lst) == 1
-    lt.insertElement (lst, listamovies[1], 2)
+    lt.insertElement (lst, listamovies['elements'][1], 2)
     assert lt.size(lst) == 2
-    lt.insertElement (lst, listamovies[2], 1)
+    lt.insertElement (lst, listamovies['elements'][2], 1)
     assert lt.size(lst) == 3
     peli = lt.getElement(lst, 1)
-    assert peli == listamovies[2]
+    assert peli == listamovies['elements'][2]
     peli = lt.getElement(lst, 2)
-    assert peli == listamovies[0]
+    assert peli == listamovies['elements'][0]
 
 
 
 def test_isPresent (lst_movies, listamovies):
-    peli = {'book_id':'10', 'book_title':'Title 10', 'author':'author 10'}
-    assert lt.isPresent (lst_movies, listamovies[2]) > 0
+    peli = {('id', '2'), ('budget', '0'), ('genres', 'Drama|Crime'), ('imdb_id', 'tt0094675'), ('original_language', 'fi'), ('original_title', 'Ariel'), ('overview', "Taisto Kasurinen is a Finnish coal miner whose father has just committed suicide and who is framed for a crime he did not commit. In jail, he starts to dream about leaving the country and starting a new life. He escapes from prison but things don't go as planned..."), ('popularity', '0.823904'), ('production_companies', 'Villealfa Filmproduction Oy'), ('production_countries', 'Finland'), ('release_date', '21/10/1988'), ('revenue', '0'), ('runtime', '69'), ('spoken_languages', 'suomi'), ('status', 'Released'), ('tagline', ''), ('title', 'Ariel'), ('vote_average', '7.1'), ('vote_count', '40'), ('production_companies_number', '2'), ('production_countries_number', '1'), ('spoken_languages_number', '2')}
+    #{'book_id':'10', 'book_title':'Title 10', 'author':'author 10'}
+    assert lt.isPresent (lst_movies, listamovies['elements'][0][0]) > 0
     assert lt.isPresent (lst_movies, peli) == 0
     
 
 
 def test_deleteElement (lst_movies, listamovies):
-    pos = lt.isPresent (lst_movies, listamovies[2])
+    pos = lt.isPresent (lst_movies, listamovies['elements'][2][0])
     assert pos > 0
     peli = lt.getElement(lst_movies, pos)
-    assert peli == listamovies[2]
+    assert peli == listamovies['elements'][2]
     lt.deleteElement (lst_movies, pos)
     assert lt.size(lst_movies) == 4
     peli = lt.getElement(lst_movies, pos)
-    assert peli == listamovies[3]
+    assert peli == listamovies['elements'][3]
 
 
 
