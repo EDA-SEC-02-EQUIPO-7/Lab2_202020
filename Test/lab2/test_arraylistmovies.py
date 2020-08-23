@@ -39,7 +39,7 @@ def loadCSVFile (file, sep=";"):
 import config as cf
 import sys
 import csv
-from ADT import list as lt
+#from ADT import list as lt
 from DataStructures import listiterator as it
 from DataStructures import liststructure as lt
 
@@ -55,9 +55,9 @@ from ADT import list as lt
 
 
 def cmpfunction (element1, element2):
-    if element1['id'] == element2['id']:
+    if element1['elements']["id"] == element2['elements']["id"]:
         return 0
-    elif element1['id'] < element2['id']:
+    elif element1['elements']["id"] < element2['elements']["id"]:
         return -1
     else:
         return 1
@@ -68,6 +68,7 @@ def lst ():
     # lst = lt.newList('SINGLE_LINKED', cmpfunction)
     lst = lt.newList('ARRAY_LIST', cmpfunction)
     return lst
+
 
 
 @pytest.fixture
@@ -82,17 +83,25 @@ def books ():
     return books
 
 
-listamovies = ap.loadCSVFile ("Data/archivosmovies/SmallMoviesDetailsCleaned.csv")
-print (listamovies)
+@pytest.fixture
+def listamovies ():
+    listamovies = ap.loadCSVFile ("Data/archivosmovies/SmallMoviesDetailsCleaned.csv")
+    return listamovies
+
+
+#listamovies = ap.loadCSVFile ("Data/archivosmovies/SmallMoviesDetailsCleaned.csv")
+#print (listamovies.keys())
+#dict_keys(['elements', 'size', 'type', 'cmpfunction'])
+#print (listamovies['elements'][0])
 
 
 
 @pytest.fixture
-def lstmovies(listamovies):
+def lst_movies(listamovies):
     lst = lt.newList('ARRAY_LIST', cmpfunction)
     # lst = lt.newList('SINGLE_LINKED', cmpfunction)
-    for i in range(len (listamovies)):    
-        lt.addLast(lst,listamovies[i])    
+    for i in range(len (listamovies['elements'])):    
+        lt.addLast(lst,listamovies['elements'][i]) 
     return lst
 
 
@@ -106,12 +115,12 @@ def test_empty (lst):
 def test_addFirst (lst, listamovies):
     assert lt.isEmpty(lst) == True
     assert lt.size(lst) == 0
-    lt.addFirst (lst, listamovies[1])
+    lt.addFirst (lst, listamovies['elements'])
     assert lt.size(lst) == 1
-    lt.addFirst (lst, listamovies[2])
+    lt.addFirst (lst, listamovies['elements'])
     assert lt.size(lst) == 2
     peli = lt.firstElement(lst)
-    assert peli == listamovies[2]
+    assert peli == listamovies['elements']
 
 
 
@@ -120,41 +129,41 @@ def test_addFirst (lst, listamovies):
 def test_addLast (lst, listamovies):
     assert lt.isEmpty(lst) == True
     assert lt.size(lst) == 0
-    lt.addLast (lst, listamovies[1])
+    lt.addLast (lst, listamovies['elements'][1])
     assert lt.size(lst) == 1
-    lt.addLast (lst, listamovies[2])
+    lt.addLast (lst, listamovies['elements'][2])
     assert lt.size(lst) == 2
     peli = lt.firstElement(lst)
-    assert peli == listamovies[1]
+    assert peli == listamovies['elements'][1]
     peli = lt.lastElement(lst)
-    assert peli == listamovies[2]
+    assert peli == listamovies['elements'][2]
 
 
 
 
-def test_getElement(lstmovies, listamovies):
-    peli = lt.getElement(lstmovies, 1)
-    assert peli == listamovies[0]
-    peli = lt.getElement(lstmovies, 5)
-    assert peli == listamovies[4]
+def test_getElement(lst_movies, listamovies):
+    peli = lt.getElement(lst_movies, 1)
+    assert peli == listamovies['elements'][0]
+    peli = lt.getElement(lst_movies, 5)
+    assert peli == listamovies['elements'][4]
 
 
 
 
-def test_removeFirst (lstmovies, listamovies):
-    assert lt.size(lstmovies) == 5
-    lt.removeFirst(lstmovies)
-    assert lt.size(lstmovies) == 4
-    peli = lt.getElement(lstmovies, 1)
-    assert peli  == listamovies[1]
+def test_removeFirst (lst_movies, listamovies):
+    assert lt.size(lst_movies) == len (listamovies)
+    lt.removeFirst(lst_movies)
+    assert lt.size(lst_movies) == len (listamovies) -1
+    peli = lt.getElement(lst_movies, 1)
+    assert peli  == listamovies['elements'][1]
 
 
 
-def test_removeLast (lstmovies, listamovies):
-    assert lt.size(lstmovies) == 5
-    lt.removeLast(lstmovies)
-    assert lt.size(lstmovies) == 4
-    peli = lt.getElement(lstmovies, 4)
+def test_removeLast (lst_movies, listamovies):
+    assert lt.size(lst_movies) == len (listamovies['elements'])
+    lt.removeLast(listamovies)
+    assert lt.size(lst_movies) == 4
+    peli = lt.getElement(listamovies, 4)
     assert peli  == listamovies[3]
 
 
@@ -175,35 +184,35 @@ def test_insertElement (lst, listamovies):
 
 
 
-def test_isPresent (lstmovies, listamovies):
+def test_isPresent (lst_movies, listamovies):
     peli = {'book_id':'10', 'book_title':'Title 10', 'author':'author 10'}
-    assert lt.isPresent (lstmovies, listamovies[2]) > 0
-    assert lt.isPresent (lstmovies, peli) == 0
+    assert lt.isPresent (lst_movies, listamovies[2]) > 0
+    assert lt.isPresent (lst_movies, peli) == 0
     
 
 
-def test_deleteElement (lstmovies, listamovies):
-    pos = lt.isPresent (lstmovies, listamovies[2])
+def test_deleteElement (lst_movies, listamovies):
+    pos = lt.isPresent (lst_movies, listamovies[2])
     assert pos > 0
-    peli = lt.getElement(lstmovies, pos)
+    peli = lt.getElement(lst_movies, pos)
     assert peli == listamovies[2]
-    lt.deleteElement (lstmovies, pos)
-    assert lt.size(lstmovies) == 4
-    peli = lt.getElement(lstmovies, pos)
+    lt.deleteElement (lst_movies, pos)
+    assert lt.size(lst_movies) == 4
+    peli = lt.getElement(lst_movies, pos)
     assert peli == listamovies[3]
 
 
 
-def test_changeInfo (lstmovies):
+def test_changeInfo (lst_movies):
     book10 = {'book_id':'10', 'book_title':'Title 10', 'author':'author 10'}
-    lt.changeInfo (lstmovies, 1, book10)
-    peli = lt.getElement(lstmovies, 1)
+    lt.changeInfo (lst_movies, 1, book10)
+    peli = lt.getElement(lst_movies, 1)
     assert book10 == peli
 
 
-def test_exchange (lstmovies, listamovies):
-    book1 = lt.getElement(lstmovies, 1)
-    book5 = lt.getElement(lstmovies, 5)
-    lt.exchange (lstmovies, 1, 5)
-    assert lt.getElement(lstmovies, 1) == book5
-    assert lt.getElement(lstmovies, 5) == book1
+def test_exchange (lst_movies, listamovies):
+    book1 = lt.getElement(lst_movies, 1)
+    book5 = lt.getElement(lst_movies, 5)
+    lt.exchange (lst_movies, 1, 5)
+    assert lt.getElement(lst_movies, 1) == book5
+    assert lt.getElement(lst_movies, 5) == book1
