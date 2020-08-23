@@ -151,11 +151,11 @@ def test_getElement(lst_movies, listamovies):
 
 
 def test_removeFirst (lst_movies, listamovies):
-    assert lt.size(lst_movies) == len (listamovies)
+    assert lt.size(lst_movies) == len (lst_movies['elements'])
     lt.removeFirst(lst_movies)
-    assert lt.size(lst_movies) == len (listamovies) -1
+    assert lt.size(lst_movies) == len (lst_movies['elements']) -1
     peli = lt.getElement(lst_movies, 1)
-    assert peli  == listamovies['elements'][1]
+    assert peli  == listamovies['elements'][0]
 
 
 
