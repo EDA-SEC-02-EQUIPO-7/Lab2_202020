@@ -59,12 +59,16 @@ def loadCSVFile (file, sep=";"):
         with open(file, encoding="utf-8") as csvfile:
             spamreader = csv.DictReader(csvfile, dialect=dialect)
             for row in spamreader: 
+                #print (row)
                 lt.addLast(lst,row)
     except:
         print("Hubo un error con la carga del archivo")
     t1_stop = process_time() #tiempo final
     print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
     return lst
+
+loadCSVFile ("Data/archivosmovies/SmallMoviesDetailsCleaned.csv", sep=";")
+
 
 
 def printMenu():
