@@ -1,6 +1,7 @@
 import pytest 
 import config 
 from DataStructures import singlelinkedlist as slt
+import csv
 
 
 
@@ -16,20 +17,29 @@ def lst ():
 
 @pytest.fixture
 def books ():
-    books = []
-    books.append({'book_id':'1', 'book_title':'Title 1', 'author':'author 1'})
-    books.append({'book_id':'2', 'book_title':'Title 2', 'author':'author 2'})
-    books.append({'book_id':'3', 'book_title':'Title 3', 'author':'author 3'})
-    books.append({'book_id':'4', 'book_title':'Title 4', 'author':'author 4'})
-    books.append({'book_id':'5', 'book_title':'Title 5', 'author':'author 5'})
-    print (books[0])
-    return books
+    sep=";"
+    lst=[]
+    file="C:/Users/santi/Desktop/prueba/lab_2prueba/Data/SmallMoviesDetailsCleaned.csv"
+    del lst[:]
+    print("Cargando archivo ....")
+    
+    dialect = csv.excel()
+    dialect.delimiter=sep
+    try:
+        with open(file, encoding="utf-8") as csvfile:
+            spamreader = csv.DictReader(csvfile, dialect=dialect)
+            for row in spamreader: 
+                lst.append(row)
+    except:
+        del lst[:]
+        print("Se presento un error en la carga del archivo")
+    return lst
 
 
 @pytest.fixture
 def lstbooks(books):
     lst = slt.newList(cmpfunction)
-    for i in range(0,5):    
+    for i in range(0,2000):    
         slt.addLast(lst,books[i])    
     return lst
 
@@ -81,18 +91,18 @@ def test_getElement(lstbooks, books):
 
 
 def test_removeFirst (lstbooks, books):
-    assert slt.size(lstbooks) == 5
+    assert slt.size(lstbooks) == 2000
     slt.removeFirst(lstbooks)
-    assert slt.size(lstbooks) == 4
+    assert slt.size(lstbooks) == 1999
     book = slt.getElement(lstbooks, 1)
     assert book  == books[1]
 
 
 
 def test_removeLast (lstbooks, books):
-    assert slt.size(lstbooks) == 5
+    assert slt.size(lstbooks) == 2000
     slt.removeLast(lstbooks)
-    assert slt.size(lstbooks) == 4
+    assert slt.size(lstbooks) == 1999
     book = slt.getElement(lstbooks, 4)
     assert book  == books[3]
 
@@ -127,7 +137,7 @@ def test_deleteElement (lstbooks, books):
     book = slt.getElement(lstbooks, pos)
     assert book == books[2]
     slt.deleteElement (lstbooks, pos)
-    assert slt.size(lstbooks) == 4
+    assert slt.size(lstbooks) == 1999
     book = slt.getElement(lstbooks, pos)
     assert book == books[3]
 

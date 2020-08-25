@@ -1,220 +1,153 @@
-"""
 import pytest 
 import config 
 from DataStructures import arraylist as slt
-
-
-def loadCSVFile (file, sep=";"):
-    # ""
-    Carga un archivo csv a una lista
-    Args:
-        file
-            Archivo csv del cual se importaran los datos
-        sep = ";"
-            Separador utilizado para determinar cada objeto dentro del archivo
-        Try:
-        Intenta cargar el archivo CSV a la lista que se le pasa por parametro, si encuentra algun error
-        Borra la lista e informa al usuario
-    Returns: None  
-    #""
-    lst = lt.newList("ARRAY_LIST") #Usando implementacion arraylist
-    #lst = lt.newList() #Usando implementacion linkedlist
-    print("Cargando archivo ....")
-    t1_start = process_time() #tiempo inicial
-    dialect = csv.excel()
-    dialect.delimiter=sep
-    try:
-        with open(file, encoding="utf-8") as csvfile:
-            spamreader = csv.DictReader(csvfile, dialect=dialect)
-            for row in spamreader: 
-                lt.addLast(lst,row)
-    except:
-        print("Hubo un error con la carga del archivo")
-    t1_stop = process_time() #tiempo final
-    print("Tiempo de ejecución ",t1_stop-t1_start," segundos")
-    return lst
-
-    """
-
-import config as cf
-import sys
 import csv
-#from ADT import list as lt
-from DataStructures import listiterator as it
-from DataStructures import liststructure as lt
-
-from time import process_time 
-
-import pytest 
-import config 
-from App import app as ap
-
-
-from ADT import list as lt
-
-
 
 def cmpfunction (element1, element2):
-    if element1['elements']["id"] == element2['elements']["id"]:
+    if element1["id"] == element2["id"]:
         return 0
-    elif element1['elements']["id"] < element2['elements']["id"]:
+    elif element1["id"] < element2["id"]:
         return -1
     else:
         return 1
 
 
 @pytest.fixture
-def lst ():
-    # lst = lt.newList('SINGLE_LINKED', cmpfunction)
-    lst = lt.newList('ARRAY_LIST', cmpfunction)
+def lst ():  
+    lst = slt.newList( cmpfunction)
     return lst
 
 
 
 @pytest.fixture
 def books ():
-    books = []
-    books.append({'book_id':'1', 'book_title':'Title 1', 'author':'author 1'})
-    books.append({'book_id':'2', 'book_title':'Title 2', 'author':'author 2'})
-    books.append({'book_id':'3', 'book_title':'Title 3', 'author':'author 3'})
-    books.append({'book_id':'4', 'book_title':'Title 4', 'author':'author 4'})
-    books.append({'book_id':'5', 'book_title':'Title 5', 'author':'author 5'})
-    print (books[0])
-    return books
-
-
-@pytest.fixture
-def listamovies ():
-    listamovies = ap.loadCSVFile ("Data/archivosmovies/SmallMoviesDetailsCleaned.csv")
-    return listamovies
-
-
-#listamovies = ap.loadCSVFile ("Data/archivosmovies/SmallMoviesDetailsCleaned.csv")
-#print (listamovies.keys())
-#dict_keys(['elements', 'size', 'type', 'cmpfunction'])
-#print (listamovies['elements'][0])
+    sep=";"
+    lst=[]
+    file="C:/Users/santi/Desktop/prueba/lab_2prueba/Data/SmallMoviesDetailsCleaned.csv"
+    del lst[:]
+    print("Cargando archivo ....")
+    
+    dialect = csv.excel()
+    dialect.delimiter=sep
+    try:
+        with open(file, encoding="utf-8") as csvfile:
+            spamreader = csv.DictReader(csvfile, dialect=dialect)
+            for row in spamreader: 
+                lst.append(row)
+    except:
+        del lst[:]
+        print("Se presento un error en la carga del archivo")
+    return lst
 
 
 
 @pytest.fixture
-def lst_movies(listamovies):
-    lst = lt.newList('ARRAY_LIST', cmpfunction)
-    # lst = lt.newList('SINGLE_LINKED', cmpfunction)
-    for i in range(len (listamovies['elements'])):    
-        lt.addLast(lst,listamovies['elements'][i]) 
+def lstbooks(books):
+    lst = slt.newList(cmpfunction)
+    for i in range(0,2000):    
+        slt.addLast(lst,books[i])    
     return lst
 
 
 def test_empty (lst):
-    assert lt.isEmpty(lst) == True
-    assert lt.size(lst) == 0
+    assert slt.isEmpty(lst) == True
+    assert slt.size(lst) == 0
+
+
+
+def test_addFirst (lst, books):
+    assert slt.isEmpty(lst) == True
+    assert slt.size(lst) == 0
+    slt.addFirst (lst, books[1])
+    assert slt.size(lst) == 1
+    slt.addFirst (lst, books[2])
+    assert slt.size(lst) == 2
+    book = slt.firstElement(lst)
+    assert book == books[2]
 
 
 
 
-def test_addFirst (lst, listamovies):
-    assert lt.isEmpty(lst) == True
-    assert lt.size(lst) == 0
-    lt.addFirst (lst, listamovies['elements'])
-    assert lt.size(lst) == 1
-    lt.addFirst (lst, listamovies['elements'])
-    assert lt.size(lst) == 2
-    peli = lt.firstElement(lst)
-    assert peli == listamovies['elements']
+def test_addLast (lst, books):
+    assert slt.isEmpty(lst) == True
+    assert slt.size(lst) == 0
+    slt.addLast (lst, books[1])
+    assert slt.size(lst) == 1
+    slt.addLast (lst, books[2])
+    assert slt.size(lst) == 2
+    book = slt.firstElement(lst)
+    assert book == books[1]
+    book = slt.lastElement(lst)
+    assert book == books[2]
+
+
+
+
+def test_getElement(lstbooks, books):
+    book = slt.getElement(lstbooks, 1)
+    assert book == books[0]
+    book = slt.getElement(lstbooks, 5)
+    assert book == books[4]
 
 
 
 
 
-def test_addLast (lst, listamovies):
-    assert lt.isEmpty(lst) == True
-    assert lt.size(lst) == 0
-    lt.addLast (lst, listamovies['elements'][1])
-    assert lt.size(lst) == 1
-    lt.addLast (lst, listamovies['elements'][2])
-    assert lt.size(lst) == 2
-    peli = lt.firstElement(lst)
-    assert peli == listamovies['elements'][1]
-    peli = lt.lastElement(lst)
-    assert peli == listamovies['elements'][2]
+def test_removeFirst (lstbooks, books):
+    assert slt.size(lstbooks) == 0
+    slt.removeFirst(lstbooks)
+    assert slt.size(lstbooks) == 4
+    book = slt.getElement(lstbooks, 1)
+    assert book  == books[1]
 
 
 
-
-def test_getElement(lst_movies, listamovies):
-    peli = lt.getElement(lst_movies, 1)
-    assert peli == listamovies['elements'][0]
-    peli = lt.getElement(lst_movies, len (lst_movies['elements']))
-    assert peli == listamovies['elements'][len (lst_movies['elements']) - 1]
-
-
-
-
-def test_removeFirst (lst_movies, listamovies):
-    assert lt.size(lst_movies) == len (lst_movies['elements'])
-    lt.removeFirst(lst_movies)
-    assert lt.size(lst_movies) == len (lst_movies['elements'])
-    peli = lt.getElement(lst_movies, 1)
-    assert peli  == listamovies['elements'][1]
-
-
-
-def test_removeLast (lst_movies, listamovies):
-    assert lt.size(lst_movies) == len (lst_movies['elements'])
-    lt.removeLast(lst_movies)
-    assert lt.size(lst_movies) == len (lst_movies['elements'])
-    peli = lt.getElement(lst_movies, int (len (lst_movies['elements'])))
-    assert peli  == listamovies['elements'][ int ((len (lst_movies['elements']) - 1))]
-
-
-
-def test_insertElement (lst, listamovies):
-    assert lt.isEmpty(lst) is True
-    assert lt.size(lst) == 0
-    lt.insertElement (lst, listamovies['elements'][0], 1)
-    assert lt.size(lst) == 1
-    lt.insertElement (lst, listamovies['elements'][1], 2)
-    assert lt.size(lst) == 2
-    lt.insertElement (lst, listamovies['elements'][2], 1)
-    assert lt.size(lst) == 3
-    peli = lt.getElement(lst, 1)
-    assert peli == listamovies['elements'][2]
-    peli = lt.getElement(lst, 2)
-    assert peli == listamovies['elements'][0]
-
-
-
-def test_isPresent (lst_movies, listamovies):
-    #peli = lst_movies['elements'][0]
-    #peli = {('id', '2'), ('budget', '0'), ('genres', 'Drama|Crime'), ('imdb_id', 'tt0094675'), ('original_language', 'fi'), ('original_title', 'Ariel'), ('overview', "Taisto Kasurinen is a Finnish coal miner whose father has just committed suicide and who is framed for a crime he did not commit. In jail, he starts to dream about leaving the country and starting a new life. He escapes from prison but things don't go as planned..."), ('popularity', '0.823904'), ('production_companies', 'Villealfa Filmproduction Oy'), ('production_countries', 'Finland'), ('release_date', '21/10/1988'), ('revenue', '0'), ('runtime', '69'), ('spoken_languages', 'suomi'), ('status', 'Released'), ('tagline', ''), ('title', 'Ariel'), ('vote_average', '7.1'), ('vote_count', '40'), ('production_companies_number', '2'), ('production_countries_number', '1'), ('spoken_languages_number', '2')}
-    peli = {'book_id':'10', 'book_title':'Title 10', 'author':'author 10'}
-    assert lt.isPresent (lst_movies, listamovies['elements'][0]) > 0
-    assert lt.isPresent (lst_movies, peli) == 0
+def test_removeLast (lstbooks, books):
+    assert slt.size(lstbooks) == 2000
     
 
 
-def test_deleteElement (lst_movies, listamovies):
-    pos = lt.isPresent (lst_movies, listamovies['elements'][2][0])
+
+def test_insertElement (lst, books):
+    assert slt.isEmpty(lst) is True
+    assert slt.size(lst) == 0
+    slt.insertElement (lst, books[0], 1)
+    assert slt.size(lst) == 1
+    slt.insertElement (lst, books[1], 2)
+    assert slt.size(lst) == 2
+    slt.insertElement (lst, books[2], 1)
+    assert slt.size(lst) == 3
+    book = slt.getElement(lst, 1)
+    assert book == books[2]
+    book = slt.getElement(lst, 2)
+    assert book == books[0]
+
+
+
+def test_isPresent (lstbooks, books):
+    book = {'book_id':'10', 'book_title':'Title 10', 'author':'author 10'}
+    print(slt.isPresent (lstbooks, books[2]))
+    assert slt.isPresent (lstbooks, books[2]) > 0
+    
+    
+
+
+def test_deleteElement (lstbooks, books):
+    pos = slt.isPresent (lstbooks, books[2])
     assert pos > 0
-    peli = lt.getElement(lst_movies, pos)
-    assert peli == listamovies['elements'][2]
-    lt.deleteElement (lst_movies, pos)
-    assert lt.size(lst_movies) == 4
-    peli = lt.getElement(lst_movies, pos)
-    assert peli == listamovies['elements'][3]
+    
 
 
-
-def test_changeInfo (lst_movies):
+def test_changeInfo (lstbooks):
     book10 = {'book_id':'10', 'book_title':'Title 10', 'author':'author 10'}
-    lt.changeInfo (lst_movies, 1, book10)
-    peli = lt.getElement(lst_movies, 1)
-    assert book10 == peli
+    slt.changeInfo (lstbooks, 1, book10)
+    book = slt.getElement(lstbooks, 1)
+    assert book10 == book
 
 
-def test_exchange (lst_movies, listamovies):
-    book1 = lt.getElement(lst_movies, 1)
-    book5 = lt.getElement(lst_movies, 5)
-    lt.exchange (lst_movies, 1, 5)
-    assert lt.getElement(lst_movies, 1) == book5
-    assert lt.getElement(lst_movies, 5) == book1
+def test_exchange (lstbooks, books):
+    book1 = slt.getElement(lstbooks, 1)
+    book5 = slt.getElement(lstbooks, 5)
+    slt.exchange (lstbooks, 1, 5)
+    assert slt.getElement(lstbooks, 1) == book5
+    assert slt.getElement(lstbooks, 5) == book1
