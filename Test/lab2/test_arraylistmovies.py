@@ -94,9 +94,9 @@ def test_getElement(lstbooks, books):
 
 
 def test_removeFirst (lstbooks, books):
-    assert slt.size(lstbooks) == 0
+    assert slt.size(lstbooks) == 2000
     slt.removeFirst(lstbooks)
-    assert slt.size(lstbooks) == 4
+    assert slt.size(lstbooks) == 1999
     book = slt.getElement(lstbooks, 1)
     assert book  == books[1]
 
