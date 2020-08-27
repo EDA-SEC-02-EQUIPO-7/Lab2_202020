@@ -82,8 +82,15 @@ def loadCSVFile (file, sep=";"):
 #Carga lista de directores con id de peliculas
 
 
-def cargarlistadirectores (file, cmpfunction = None):
-    listadirectores = lt.newList("ARRAY_LIST", cmpfunction=None)
+def cmpnombredirectores(director1, director2):
+    if director1 == director2["nombre"]:
+        #Director2 es el director que ya está en la lista, es decir el diccionario, por esa razon se pone el ["nombre"]
+        return True
+    return False
+
+
+def cargarlistadirectores (file, cmpnombredirectores):
+    listadirectores = lt.newList("ARRAY_LIST", cmpnombredirectores)
     #print (listadirectores)
     dialect = csv.excel()
     dialect.delimiter=";"
@@ -93,30 +100,23 @@ def cargarlistadirectores (file, cmpfunction = None):
 
         for casting in row:
 
-            
             #print (listadirectores["elements"])
-            
             pos = lt.isPresent(listadirectores, casting["director_name"])
             #print (pos)
-            
             
             if pos:
                 director = lt.getElement(listadirectores, pos)
                 lt.addFirst (director["listapeliculas"], casting["id"])
                 #print (director)
 
-            
             else:
                 director = {"nombre" : None, "listapeliculas" : None}                
                 director["nombre"] = casting["director_name"]                
                 director["listapeliculas"] = lt.newList('SINGLE_LINKED')                
                 lt.addFirst(director["listapeliculas"], casting["id"])
-                
-              
+
                 lt.addLast (listadirectores, director)
-                #print (listadirectores)
-            
-            
+    print (listadirectores[]) 
     
     return listadirectores
 
@@ -334,7 +334,7 @@ def main():
 
 
             elif int(inputs[0])==6: #opcion 6
-                listadedirectores = cargarlistadirectores("Data/archivosmovies/MoviesCastingRaw-small.csv")
+                listadedirectores = cargarlistadirectores("Data/archivosmovies/MoviesCastingRaw-small.csv", cmpnombredirectores)
                 print (listadedirectores)
 
                 if lista==None or lista['size']==0: #obtener la longitud de la lista
