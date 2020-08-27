@@ -85,12 +85,13 @@ def loadCSVFile (file, sep=";"):
 def cmpnombredirectores(director1, director2):
     if director1 == director2["nombre"]:
         #Director2 es el director que ya está en la lista, es decir el diccionario, por esa razon se pone el ["nombre"]
-        return True
-    return False
+        return False
+    return True
 
 
 def cargarlistadirectores (file, cmpnombredirectores):
     listadirectores = lt.newList("ARRAY_LIST", cmpnombredirectores)
+    
     #print (listadirectores)
     dialect = csv.excel()
     dialect.delimiter=";"
@@ -98,8 +99,12 @@ def cargarlistadirectores (file, cmpnombredirectores):
     with open (file, encoding="utf-8") as csvfile:
         row = csv.DictReader(csvfile, dialect=dialect)
 
+        
         for casting in row:
+            #print (casting)
+            #print (type (casting))
 
+            
             #print (listadirectores["elements"])
             pos = lt.isPresent(listadirectores, casting["director_name"])
             #print (pos)
@@ -116,8 +121,12 @@ def cargarlistadirectores (file, cmpnombredirectores):
                 lt.addFirst(director["listapeliculas"], casting["id"])
 
                 lt.addLast (listadirectores, director)
-    print (listadirectores[]) 
+
+                
+    #print (listadirectores[0]) 
     
+    print(listadirectores["size"])
+
     return listadirectores
 
 
@@ -335,13 +344,23 @@ def main():
 
             elif int(inputs[0])==6: #opcion 6
                 listadedirectores = cargarlistadirectores("Data/archivosmovies/MoviesCastingRaw-small.csv", cmpnombredirectores)
-                print (listadedirectores)
+                #print (listadedirectores)
 
-                if lista==None or lista['size']==0: #obtener la longitud de la lista
+                
+
+
+                if listadedirectores==None or listadedirectores['size']==0: #obtener la longitud de la lista
                     print("La lista esta vacía")
+
+                print (listadedirectores['size']) 
+                print (listadedirectores['elements'])
+
+
+                """
                 else:
                     criteria =input('Ingrese el criterio de búsqueda\n')
                     #peliculaspordirector
+                """
 
 
 
