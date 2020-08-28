@@ -123,17 +123,13 @@ def peorcalificadas (peli1, peli2):
 #requerimiento3
 #requerimiento3
 
-def cmpfunction3 (element1, element2):
-    if element1 == element2["nombre"]:
-        return False
-    return True
+
 def requerimiento3_lstdirector(lstcas,nombre,lstdet):
     lstdet["cmpfunction"]=cmpfunction
     if lt.isEmpty(lstcas):
         print("La lista esta vacía")  
         return 0
     else:
-        lst = lt.newList("SINGLE_LINKED",cmpfunction3)
         iterator = it.newIterator(lstcas)
         while  it.hasNext(iterator):
             element = it.next(iterator)
@@ -142,12 +138,58 @@ def requerimiento3_lstdirector(lstcas,nombre,lstdet):
                 titulo=lt.getElement(lstdet,r)
                 print(titulo["original_title"]) 
                  
-    return lst
+    return None
 
 #requerimiento4
 #requerimiento4
 #requerimiento4
 
+def cmpfunction4(element1,element2):
+    if element1 == element2["actor1_name"]:
+        return False
+    elif element1 == element2["actor2_name"]:
+        return False
+    elif element1 == element2["actor3_name"]:
+        return False
+    elif element1 == element2["actor4_name"]:
+        return False
+    elif element1 == element2["actor5_name"]:
+        return False
+    return True
+
+def cmpfunction5(element1,element2):
+    if element1 == element2["vote_average"]:
+        return False
+    return True
+
+def requerimiento4(lstcas,nombre,lstdet):
+    if lt.isEmpty(lstcas):
+        print("La lista esta vacía")  
+        return 0
+    else:
+        iterator = it.newIterator(lstcas)
+        lst=lt.newList("SINGLE_LINKED")
+        lst["sumatoria"]=0
+        lst["director"]=""
+        mayor=0
+        directores={}
+        while  it.hasNext(iterator):
+            element = it.next(iterator)
+            if cmpfunction4(nombre,element)==False:
+                lstdet["cmpfunction"]=cmpfunction
+                r=lt.isPresent(lstdet,element["id"])
+                titulo=lt.getElement(lstdet,r)
+                lt.addFirst(lst,titulo["original_title"])
+                lst["sumatoria"]+=float(titulo["vote_average"])
+                director=element["director_name"]
+                directores[director]=directores.get(director,0)+1
+                if directores[director]>mayor:
+                    mayor=directores[director]
+                    lst["director"]=director
+            
+        return lst
+
+            
 def main():
     lista = lt.newList()   # se require usar lista definida
     while True:
@@ -201,8 +243,23 @@ def main():
                 else:
                     director=input("Escriba un director ")
                     directores=requerimiento3_lstdirector(listacasting,director,listadetalles)
-                    
-                    
+            elif int(inputs[0])==7: #opcion 6
+                if listadetalles==None or listadetalles['size']==0: #consultar_pelis_director
+                    print("lista vacia")
+                else:
+                    nombre=input("Escriba un actor")        
+                    r4=requerimiento4(listacasting,nombre,listadetalles)
+                    if r4["size"]==0:
+                        print("Ese actor no existe")
+                    else:
+                        print("El director con el que más ha trabajado es:"+ r4["director"])
+                        print("Ha participado en "+str(r4["size"])+" peliculas" )
+                        print("El promedio de calificación de sus peliculas es: "+ str(round(r4["sumatoria"]/int(r4["size"]))))
+                        print("Las peliculas en las que ha estado son:")
+                        iterator = it.newIterator(r4)
+                        while  it.hasNext(iterator):
+                            element = it.next(iterator)
+                            print(element)
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
                 
