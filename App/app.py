@@ -127,7 +127,8 @@ def cmpfunction3 (element1, element2):
     if element1 == element2["nombre"]:
         return False
     return True
-def requerimiento3_lstdirector(lstcas):
+def requerimiento3_lstdirector(lstcas,nombre,lstdet):
+    lstdet["cmpfunction"]=cmpfunction
     if lt.isEmpty(lstcas):
         print("La lista esta vacía")  
         return 0
@@ -136,31 +137,16 @@ def requerimiento3_lstdirector(lstcas):
         iterator = it.newIterator(lstcas)
         while  it.hasNext(iterator):
             element = it.next(iterator)
-            pos=lt.isPresent(lst,element["director_name"])
-            if pos:
-                director=lt.getElement(lst,pos)
-                lt.addFirst(director["peliculas"],element["id"])
-
-            else:
-                director={"nombre":None,"peliculas":None}
-                director["nombre"]=element["director_name"] 
-                director["peliculas"]=lt.newList("SINGLE_LINKED")
-                lt.addFirst(director["peliculas"],element["id"])
-                lt.addFirst(lst,director)      
+            if element["director_name"]==nombre:
+                r=lt.isPresent(lstdet,element["id"])
+                titulo=lt.getElement(lstdet,r)
+                print(titulo["original_title"]) 
+                 
     return lst
 
-def requerimiento3_id(lstcas,lstdet,nombre):
-    pos=lt.isPresent(lstcas,nombre)
-    lstdet["cmpfunction"]=cmpfunction
-    r=lt.isPresent(lstdet,"5")
-    if pos:
-        pelis=lt.getElement(lstcas,pos)
-        iterator = it.newIterator(pelis["peliculas"])
-        while  it.hasNext(iterator):
-            element = it.next(iterator)
-            r=lt.isPresent(lstdet,element)
-            titulo=lt.getElement(lstdet,r)
-            print(titulo["original_title"])
+#requerimiento4
+#requerimiento4
+#requerimiento4
 
 def main():
     lista = lt.newList()   # se require usar lista definida
@@ -214,8 +200,8 @@ def main():
                     print("lista vacia")
                 else:
                     director=input("Escriba un director ")
-                    directores=requerimiento3_lstdirector(listacasting)
-                    requerimiento3_id(directores,listadetalles,director)
+                    directores=requerimiento3_lstdirector(listacasting,director,listadetalles)
+                    
                     
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
