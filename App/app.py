@@ -246,6 +246,52 @@ def requerimiento5_generos(genero,lstdet):
 
 
 
+#requerimiento6
+#requerimiento6
+#requerimiento6
+
+
+
+def cmpfunction_generos(element1,element2):
+    if element1 == element2["genres"]:
+        return False
+    return True
+
+def requerimiento6_generosranking(genero,lstdet):
+
+    if lt.isEmpty(lstdet):
+        print("La lista esta vacía")  
+        return 0
+    else:
+        iterator = it.newIterator(lstdet)
+        lst=lt.newList("SINGLE_LINKED")
+        lst["sumatoria"]=0
+        lst["genero"]=""
+        mayor=0
+        generosdict={}
+        while  it.hasNext(iterator):
+            element = it.next(iterator)
+            
+            if cmpfunction_generos(genero,element)==False:
+                lstdet["cmpfunction"]=cmpfunction
+                r=lt.isPresent(lstdet,element["id"])
+                titulo=lt.getElement(lstdet,r)
+                lt.addFirst(lst,titulo["original_title"])
+                lst["sumatoria"]+=float(titulo["vote_average"])
+                
+                promvote = element['vote_average']
+                conteovot = element['vote_count']
+
+                genero=element["genres"]
+                generosdict[genero]=generosdict.get(genero,0)+1
+                if generosdict[genero]>mayor:
+                    mayor=generosdict[genero]
+                    lst["genero"]=genero
+            
+        return lst
+
+
+
 
 
 
@@ -339,6 +385,7 @@ def main():
 
                         #print (type (listageneros))
                         #print (listageneros.keys())
+                        #dict_keys(['first', 'last', 'size', 'type', 'cmpfunction', 'sumatoria', 'genero'])
                         #print (listageneros['first'])
                         #print (element)
 
