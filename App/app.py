@@ -258,50 +258,24 @@ def requerimiento5_generos(genero,lstdet):
 #requerimiento6
 
 
-def requerimiento6_generosranking(genero,lstdet,comparatoria):
-    #Funcion que recibe una lista y la ordena según la comparacion que se de como parámetro
+def requerimiento6_generosranking(genero,file,comparatoria, sep=";"):
+    lst = lt.newList("ARRAY_LIST") 
+    dialect = csv.excel()
+    dialect.delimiter=sep
+    try:
+        with open(file, encoding='utf-8-sig') as csvfile:
+            spamreader = csv.DictReader(csvfile, dialect=dialect)
+            for row in spamreader: 
+                if genero in row["genres"]:
+                    lt.addLast(lst,row)
+                    
+    except:
+        print("Hubo un error con la carga del archivo")
+    
+    ss.mergesort(lst,comparatoria) 
+    return lst
 
-    ss.mergesort(lstdet,comparatoria) 
-
-    if lt.isEmpty(lstdet):
-        print("La lista esta vacía")  
-        return 0
-    else:
-        iterator = it.newIterator(lstdet)
-        lst=lt.newList("ARRAY_LIST")
-        lst["sumatoria"]=0
-        lst["genero"]=""
-        mayor=0
-        generosdict={}
-        while  it.hasNext(iterator):
-            lstgen=lt.newList("ARRAY_LIST")
-
-            
-            #esta lista de python normal va a contener el nombre, la calificación y la cantidad de votos en ese orden. Esta es la info que se almacenará en la lista encadenada
-            element = it.next(iterator)
-            #print (element["id"])
-
-            if cmpfunction_generos(genero,element)==False:
-                lstdet["cmpfunction"]=cmpfunction
-                r=lt.isPresent(lstdet,element["id"])
-                titulo=lt.getElement(lstdet,r)
-                #print (titulo.keys())
-
-                lt.addLast(lstgen,titulo["original_title"])
-                lt.addLast(lstgen,titulo["vote_average"])
-                lt.addLast(lstgen,titulo["vote_count"])
-
-                lt.addFirst(lst,lstgen)
-                lst["sumatoria"]+=float(titulo["vote_average"])
-                
-                genero=element["genres"]
-                generosdict[genero]=generosdict.get(genero,0)+1
-                if generosdict[genero]>mayor:
-                    mayor=generosdict[genero]
-                    lst["genero"]=genero
-       
-            
-        return lst
+    
          
 
 #main
@@ -309,22 +283,15 @@ def requerimiento6_generosranking(genero,lstdet,comparatoria):
 #main
             
 def main():
-    lista = lt.newList()   # se require usar lista definida
     while True:
         printMenu() #imprimir el menu de opciones en consola
         inputs =input('Seleccione una opción para continuar\n') #leer opción ingresada
         if len(inputs)>0:
-
             if int(inputs[0])==1: #opcion 1
                 listadetalles = loadCSVFile("Data\AllMoviesDetailsCleaned.csv") #llamar funcion cargar datos
                 listacasting = loadCSVFile("Data\AllMoviesCastingRaw.csv")
                 print("Datos cargados, ",listadetalles['size']," peliculas cargadas en total")
                 print("Datos cargados, ",listacasting['size']," peliculas cargadas en total")
-
-                
-
-
-
             elif int(inputs[0])==2: #opcion 2 ranking mejores/peores peliculas - Requerimiento 2
                 if listacasting==None or listacasting['size']==0 or listadetalles==None or listadetalles['size']==0: #obtener la longitud de la lista
                     print("La lista esta vacía")    
@@ -338,8 +305,7 @@ def main():
                         print ("\nLas peliculas con mayor cantidad de votos son: ")
                         pelismasvotadas(listadetalles)
                         print ("\nLas peliculas con menor cantidad de votos son: ")
-                        pelismenosvotadas(listadetalles)
-                        
+                        pelismenosvotadas(listadetalles)       
                     elif seleccion == "B":
                         print ("\nLas peliculas con mayor calificación son: ")
                         pelismejorcalificadas(listadetalles)
@@ -347,9 +313,6 @@ def main():
                         pelispeorcalificadas(listadetalles)
                     else:
                         print ("\nLa letra escogida no corresponde a ninguna opción!")
-
-
-
             elif int(inputs[0])==3: #Requerimiento 3 - conocer peliculas de un director
                 if listadetalles==None or listadetalles['size']==0: #consultar_pelis_director
                     print("lista vacia")
@@ -358,8 +321,7 @@ def main():
                     directores=requerimiento3_lstdirector(listacasting,director,listadetalles)
                     if directores["size"]==0:
                         print("Ese actor no existe")
-                    else:
-                        
+                    else:           
                         print("Ha participado en "+str(directores["size"])+" peliculas" )
                         print("El promedio de calificación de sus peliculas es: "+ str(round(directores["sumatoria"]/int(directores["size"]))))
                         print("Las peliculas en las que ha estado son:")
@@ -367,8 +329,6 @@ def main():
                         while  it.hasNext(iterator):
                             element = it.next(iterator)
                             print(element)
-
-
             elif int(inputs[0])==4: #Requerimiento 4 - consultar por actor, sus apariciones y colaboracioes con director
                 if listadetalles==None or listadetalles['size']==0: 
                     print("lista vacia")
@@ -386,82 +346,70 @@ def main():
                         while  it.hasNext(iterator):
                             element = it.next(iterator)
                             print(element)
-
             elif int(inputs[0])==5: #Requerimiento 5 - conocer peliculas por genero, con su respectiva calificacion
                 if listadetalles==None or listadetalles['size']==0: 
                     print("lista vacia")
                 else:
                     genero_busqueda=input("Escriba un genero de películas que desee consultar:\n")        
-                    listageneros = requerimiento5_generos(genero_busqueda,listadetalles)
-                    
-                    
+                    listageneros = requerimiento5_generos(genero_busqueda,listadetalles)                  
                     if listageneros["size"]==0:
                         print("El género ingresado no tiene coincidencias en nuestro registro")
                     else:
                         print("\nPara el género {}, se encontraron en total {} películas:\n" .format(genero_busqueda, str(listageneros["size"])))
-                        iterator = it.newIterator(listageneros)
-                        
+                        iterator = it.newIterator(listageneros)                     
                         while  it.hasNext(iterator):
                             element = it.next(iterator)
                             print("->" + element)
-
                         print ("\nEl promedio de calificación obtenido en estas películas es: "+ str(round( (listageneros["sumatoria"]/int(listageneros["size"])),2  )))
-
-
-
             elif int(inputs[0])==6: #Requerimiento 6 - rankings por genero 
                 if listadetalles==None or listadetalles['size']==0: 
                     print("lista vacia")
                 else:
-                    palabra = ""
-                    observacion = ""
                     print ("En esta opcíon puede consultar el mejor y el peor ranking de las peliculas por género:")
-                    generoranking=input("Escriba un genero de consulta:\n")
-                    
+                    genero=input("Escriba un genero de consulta:\n") 
                     comparacionseleccionada = input ("Escriba \"A\" si desea consultar por cantidad de votos o \"B\" si desea consultar por calificacion:\n")
-
                     if comparacionseleccionada == "A":
-                        #es contraintuitivo que low este con la funcion de masvotadas, pero así funciona, entonces no la cambiemos. Igual en B
-                        generoslow=requerimiento6_generosranking(generoranking,listadetalles,masvotadas)
-                        generostop=requerimiento6_generosranking(generoranking,listadetalles,menosvotadas)
-                        palabra = "votaciones en total"
-                        observacion = 2
-                    
+                        sumatoria=0
+                        generoslow=requerimiento6_generosranking(genero,"Data\AllMoviesDetailsCleaned.csv",menosvotadas)
+                        generostop=requerimiento6_generosranking(genero,"Data\AllMoviesDetailsCleaned.csv",masvotadas)
+                        print("Para las 10 mejores")
+                        for contador in range(1, 11):
+                            pelicula = lt.getElement(generostop, contador)
+                            print(pelicula["original_title"])
+                            sumatoria+=int(pelicula["vote_count"])
+                        print(sumatoria)
+                        print("El promedio de calificación es "+ str(sumatoria/10)) 
+                        sumatoria=0  
+                        print("--------------")
+                        print("Para las 10 peores")
+                        for contador in range(1, 11):
+                            pelicula = lt.getElement(generoslow, contador)
+                            print(pelicula["original_title"])
+                            contador+=int(pelicula["vote_count"])
+                        print("El promedio de calificación es "+ str(sumatoria/10))   
+                        print(sumatoria)
+
                     elif comparacionseleccionada == "B":
-                        generoslow=requerimiento6_generosranking(generoranking,listadetalles,mejorcalificadas)
-                        generostop=requerimiento6_generosranking(generoranking,listadetalles,peorcalificadas)
-                        palabra = "de calificación"
-                        observacion = 1
+                        generoslow=requerimiento6_generosranking(genero,"Data\AllMoviesDetailsCleaned.csv",peorcalificadas)
+                        generostop=requerimiento6_generosranking(genero,"Data\AllMoviesDetailsCleaned.csv",mejorcalificadas)
+                        sumatoria=0
+                        for contador in range(1, 11):
+                            pelicula = lt.getElement(generostop, contador)
+                            print(pelicula["original_title"])
+                            sumatoria+=float(pelicula["vote_average"])
+                        print(sumatoria)
+                        print("El promedio de calificación es "+ str(sumatoria/10))   
+                        sumatoria=0
+                        for contador in range(1, 11):
+                            pelicula = lt.getElement(generoslow, contador)
+                            print(pelicula["original_title"])
+                            sumatoria+=float(pelicula["vote_average"])
+                        print("El promedio de calificación es "+ str(sumatoria/10)) 
 
                     else:
                         print("opción no válida")
 
-                    if generoslow["size"]==0:
-                        print("El género ingresado no tiene coincidencias en nuestro registro")
-                    else:
-                        print("\nPara el género {}, se encontraron en total {} películas:\n" .format(generoranking, str(generoslow["size"])))
-                        
-                        iterator = it.newIterator(generostop)
-                        element = it.next(iterator)
-                        #print (element)
-                        print ("Las 10 mejores peliculas son:\n")
-                        sumatoriatop = 0
-                        for i in range (10):
-                            print (str(i+1) + ". " + lt.getElement(element,0)+ ", con " + str ( element["elements"][2])+ " votos, cuyo promedio es "+element["elements"][1])
-                            element = it.next(iterator) 
-                            sumatoriatop+=float(element["elements"][1])
-                        promediotop = round ((sumatoriatop/10),2)
-                        print ("\nEl promedio de " + palabra +" para estas películas es de: " + str(promediotop))
-                        iterator = it.newIterator(generoslow)
-                        element = it.next(iterator)
-                        sumatoriatop = 0
-                        print ("\n\nLas 10 peores peliculas son:\n")
-                        for i in range (10):
-                            print (str(i+1) + ". " + element["elements"][0]+ ", con " + str ( element["elements"][2])+ " votos, cuyo promedio es "+element["elements"][1])
-                            element = it.next(iterator)
-                            sumatoriatop+=float(element["elements"][1])
-                        promediotop = round ((sumatoriatop/10),2)
-                        print ("\nEl promedio de " + palabra +" para estas películas es de: " + str(promediotop))   
+                       
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
                 
