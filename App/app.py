@@ -6,7 +6,7 @@ from ADT import list as lt
 from DataStructures import listiterator as it
 from DataStructures import liststructure as lt
 
-from Sorting import shellsort as ss
+from Sorting import mergesort as ss
 
 from time import process_time 
 
@@ -78,25 +78,25 @@ def countElementsByCriteria(criteria, column, lst):
 #Requerimiento2
 
 def pelismasvotadas(lst):
-    ss.shellSort(lst, masvotadas)
+    ss.mergesort(lst, masvotadas)
     for contador in range(1, 11):
         pelicula = lt.getElement(lst, contador)
         print ("{}. {}, cantidad de votos: {}". format (contador, pelicula['original_title'], pelicula["vote_count"]))
 
 def pelismenosvotadas(lst):
-    ss.shellSort(lst, menosvotadas)
+    ss.mergesort(lst, menosvotadas)
     for contador in range(1, 11):
         pelicula = lt.getElement(lst, contador)
         print ("{}. {}, cantidad de votos: {}". format (contador, pelicula['original_title'], pelicula["vote_count"])) 
 
 def pelismejorcalificadas(lst):
-    ss.shellSort(lst, mejorcalificadas)
+    ss.mergesort(lst, mejorcalificadas)
     for contador in range(1, 11):
         pelicula = lt.getElement(lst, contador)
         print ("{}. {}, promedio de votación: {}". format (contador, pelicula['original_title'], pelicula['vote_average'])) 
 
 def pelispeorcalificadas(lst):
-    ss.shellSort(lst, peorcalificadas)
+    ss.mergesort(lst, peorcalificadas)
     for contador in range(1, 11):
         pelicula = lt.getElement(lst, contador)
         print ("{}. {}, cantidad de votos: {}". format (contador, pelicula['original_title'], pelicula['vote_average'])) 
@@ -139,15 +139,22 @@ def requerimiento3_lstdirector(lstcas,nombre,lstdet):
         print("La lista esta vacía")  
         return 0
     else:
+        
+        
+        lst=lt.newList("SINGLE_LINKED")
+        lst["sumatoria"]=0
         iterator = it.newIterator(lstcas)
         while  it.hasNext(iterator):
             element = it.next(iterator)
+            
             if element["director_name"]==nombre:
                 r=lt.isPresent(lstdet,element["id"])
                 titulo=lt.getElement(lstdet,r)
-                print(titulo["original_title"]) 
+                lt.addFirst(lst,titulo["original_title"])
+                lst["sumatoria"]+=float(titulo["vote_average"])
+                
                  
-    return None
+    return lst
 
 
 
@@ -254,21 +261,22 @@ def requerimiento5_generos(genero,lstdet):
 def requerimiento6_generosranking(genero,lstdet,comparatoria):
     #Funcion que recibe una lista y la ordena según la comparacion que se de como parámetro
 
-    ss.shellSort(lstdet,comparatoria) 
+    ss.mergesort(lstdet,comparatoria) 
 
     if lt.isEmpty(lstdet):
         print("La lista esta vacía")  
         return 0
     else:
         iterator = it.newIterator(lstdet)
-        lst=lt.newList("SINGLE_LINKED")
+        lst=lt.newList("ARRAY_LIST")
         lst["sumatoria"]=0
         lst["genero"]=""
         mayor=0
         generosdict={}
         while  it.hasNext(iterator):
+            lstgen=lt.newList("ARRAY_LIST")
 
-            listadatosgenero = []
+            
             #esta lista de python normal va a contener el nombre, la calificación y la cantidad de votos en ese orden. Esta es la info que se almacenará en la lista encadenada
             element = it.next(iterator)
             #print (element["id"])
@@ -279,11 +287,11 @@ def requerimiento6_generosranking(genero,lstdet,comparatoria):
                 titulo=lt.getElement(lstdet,r)
                 #print (titulo.keys())
 
-                listadatosgenero.append(titulo["original_title"])
-                listadatosgenero.append(titulo["vote_average"])
-                listadatosgenero.append(titulo["vote_count"])
+                lt.addLast(lstgen,titulo["original_title"])
+                lt.addLast(lstgen,titulo["vote_average"])
+                lt.addLast(lstgen,titulo["vote_count"])
 
-                lt.addFirst(lst,listadatosgenero)
+                lt.addFirst(lst,lstgen)
                 lst["sumatoria"]+=float(titulo["vote_average"])
                 
                 genero=element["genres"]
@@ -308,13 +316,11 @@ def main():
         if len(inputs)>0:
 
             if int(inputs[0])==1: #opcion 1
-                listadetalles = loadCSVFile("Data/archivosmovies/SmallMoviesDetailsCleaned.csv") #llamar funcion cargar datos
-                listacasting = loadCSVFile("Data/archivosmovies/MoviesCastingRaw-small.csv")
+                listadetalles = loadCSVFile("Data\SmallMoviesDetailsCleaned.csv") #llamar funcion cargar datos
+                listacasting = loadCSVFile("Data\MoviesCastingRaw-small.csv")
                 print("Datos cargados, ",listacasting['size']," peliculas cargadas en total")
 
-                #print (listadetalles["first"]["info"]["id"])
-                #print (listadetalles["first"].keys())
-                #dict_keys(['info', 'next'])
+                
 
 
 
@@ -349,7 +355,17 @@ def main():
                 else:
                     director=input("Escriba un director ")
                     directores=requerimiento3_lstdirector(listacasting,director,listadetalles)
-
+                    if directores["size"]==0:
+                        print("Ese actor no existe")
+                    else:
+                        
+                        print("Ha participado en "+str(directores["size"])+" peliculas" )
+                        print("El promedio de calificación de sus peliculas es: "+ str(round(directores["sumatoria"]/int(directores["size"]))))
+                        print("Las peliculas en las que ha estado son:")
+                        iterator = it.newIterator(directores)
+                        while  it.hasNext(iterator):
+                            element = it.next(iterator)
+                            print(element)
 
 
             elif int(inputs[0])==4: #Requerimiento 4 - consultar por actor, sus apariciones y colaboracioes con director
@@ -430,28 +446,21 @@ def main():
                         print ("Las 10 mejores peliculas son:\n")
                         sumatoriatop = 0
                         for i in range (10):
-                            print (str(i+1) + ". " + element[0] + ", con " + str ( element[observacion]) +" " +  palabra)
+                            print (str(i+1) + ". " + lt.getElement(element,0)+ ", con " + str ( element["elements"][2])+ " votos, cuyo promedio es "+element["elements"][1])
                             element = it.next(iterator) 
-                            sumatoriatop += float (element[observacion])
-
+                            sumatoriatop+=float(element["elements"][1])
                         promediotop = round ((sumatoriatop/10),2)
                         print ("\nEl promedio de " + palabra +" para estas películas es de: " + str(promediotop))
-
-
                         iterator = it.newIterator(generoslow)
                         element = it.next(iterator)
-                        #print (element)
+                        sumatoriatop = 0
                         print ("\n\nLas 10 peores peliculas son:\n")
-                        sumatorialow = 0
                         for i in range (10):
-                            print (str(i+1) + ". " + element[0] + ", con " + str ( element[observacion]) +" " +  palabra)
-                            element = it.next(iterator) 
-                            sumatorialow += float (element[observacion])
-
-                        promediolow = round ((sumatorialow/10),2)
-                        print ("\nEl promedio de " + palabra +" para estas películas es de: " + str(promediolow))
-                            
-
+                            print (str(i+1) + ". " + element["elements"][0]+ ", con " + str ( element["elements"][2])+ " votos, cuyo promedio es "+element["elements"][1])
+                            element = it.next(iterator)
+                            sumatoriatop+=float(element["elements"][1])
+                        promediotop = round ((sumatoriatop/10),2)
+                        print ("\nEl promedio de " + palabra +" para estas películas es de: " + str(promediotop))   
             elif int(inputs[0])==0: #opcion 0, salir
                 sys.exit(0)
                 
