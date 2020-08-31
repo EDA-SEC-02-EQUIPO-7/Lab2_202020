@@ -17,14 +17,14 @@ def cmpfunction(element1,element2):
 
 
 def loadCSVFile (file, sep=";"):
-    #lst = lt.newList("ARRAY_LIST") #Usando implementacion arraylist
-    lst = lt.newList("SINGLE_LINKED") #Usando implementacion linkedlist
+    lst = lt.newList("ARRAY_LIST") #Usando implementacion arraylist
+    #lst = lt.newList("SINGLE_LINKED") #Usando implementacion linkedlist
     print("Cargando archivo ....")
     t1_start = process_time() #tiempo inicial
     dialect = csv.excel()
     dialect.delimiter=sep
     try:
-        with open(file, encoding="utf-8") as csvfile:
+        with open(file, encoding='utf-8-sig') as csvfile:
             spamreader = csv.DictReader(csvfile, dialect=dialect)
             for row in spamreader: 
                 #print (row)
@@ -316,8 +316,9 @@ def main():
         if len(inputs)>0:
 
             if int(inputs[0])==1: #opcion 1
-                listadetalles = loadCSVFile("Data\SmallMoviesDetailsCleaned.csv") #llamar funcion cargar datos
-                listacasting = loadCSVFile("Data\MoviesCastingRaw-small.csv")
+                listadetalles = loadCSVFile("Data\AllMoviesDetailsCleaned.csv") #llamar funcion cargar datos
+                listacasting = loadCSVFile("Data\AllMoviesCastingRaw.csv")
+                print("Datos cargados, ",listadetalles['size']," peliculas cargadas en total")
                 print("Datos cargados, ",listacasting['size']," peliculas cargadas en total")
 
                 
