@@ -377,7 +377,7 @@ def main():
                             pelicula = lt.getElement(generostop, contador)
                             print(pelicula["original_title"])
                             sumatoria+=int(pelicula["vote_count"])
-                        print(sumatoria)
+                        
                         print("El promedio de calificación es "+ str(sumatoria/10)) 
                         sumatoria=0  
                         print("--------------")
@@ -387,19 +387,20 @@ def main():
                             print(pelicula["original_title"])
                             contador+=int(pelicula["vote_count"])
                         print("El promedio de calificación es "+ str(sumatoria/10))   
-                        print(sumatoria)
-
+                        
                     elif comparacionseleccionada == "B":
                         generoslow=requerimiento6_generosranking(genero,"Data\AllMoviesDetailsCleaned.csv",peorcalificadas)
                         generostop=requerimiento6_generosranking(genero,"Data\AllMoviesDetailsCleaned.csv",mejorcalificadas)
                         sumatoria=0
+                        print("Para las 10 mejores")
                         for contador in range(1, 11):
                             pelicula = lt.getElement(generostop, contador)
                             print(pelicula["original_title"])
                             sumatoria+=float(pelicula["vote_average"])
-                        print(sumatoria)
                         print("El promedio de calificación es "+ str(sumatoria/10))   
                         sumatoria=0
+                        print("--------------")
+                        print("Para las 10 peores")
                         for contador in range(1, 11):
                             pelicula = lt.getElement(generoslow, contador)
                             print(pelicula["original_title"])
